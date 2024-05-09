@@ -1,20 +1,40 @@
-function zigzagLevelOrder(root) {
-  if (!root) return [];
-  const result = [];
-  const queue = [root];
-  let zigzag = false;
-  while (queue.length) {
-    const levelSize = queue.length;
-    const currentLevel = [];
-    for (let i = 0; i < levelSize; i++) {
-      const node = queue.shift();
-      if (zigzag) currentLevel.unshift(node.val);
-      else currentLevel.push(node.val);
-      if (node.left) queue.push(node.left);
-      if (node.right) queue.push(node.right);
+const strandSort = (arr) => {
+  const extract = (arr, x) => {
+    const extracted = [];
+    let i = 0;
+    while (i < arr.length) {
+      if (x.includes(arr[i])) {
+        extracted.push(arr.splice(i, 1)[0]);
+      } else {
+        i++;
+      }
     }
-    result.push(currentLevel);
-    zigzag = !zigzag;
+    return extracted;
+  };
+  const merge = (a, b) => {
+    const merged = [];
+    let i = 0;
+    let j = 0;
+    while (i < a.length && j < b.length) {
+      if (a[i] < b[j]) {
+        merged.push(a[i]);
+        i++;
+      } else {
+        merged.push(b[j]);
+        j++;
+      }
+    }
+    return merged.concat(i < a.length ? a.slice(i) : b.slice(j));
+  };
+  let sorted = [];
+  while (arr.length > 0) {
+    let sublist = [arr.shift()];
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i] > sublist[sublist.length - 1]) {
+        sublist.push(arr.splice(i, 1)[0]);
+      }
+    }
+    sorted = merge(sorted, sublist);
   }
-  return result;
-}
+  return sorted;
+};
